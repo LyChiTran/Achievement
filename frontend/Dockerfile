@@ -3,8 +3,11 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies
+# Copy package files and config files first
 COPY package.json package-lock.json* ./
+COPY tsconfig.json next.config.js ./
+
+# Install dependencies
 RUN npm install --legacy-peer-deps
 
 # Copy source code
