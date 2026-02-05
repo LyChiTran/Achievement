@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy package files and config files first
 COPY package.json package-lock.json* ./
-COPY tsconfig.json next.config.js ./
+COPY tsconfig.json jsconfig.json next.config.js ./
 
 # Install dependencies
 RUN npm install --legacy-peer-deps
