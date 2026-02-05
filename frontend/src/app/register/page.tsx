@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
 import { UserPlus, Mail, Lock, User } from "lucide-react";
-import axios from "axios";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { api } from "@/lib/api";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -65,7 +63,7 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
-            const response = await axios.post(`${API_URL}/api/auth/register/request-otp`, null, {
+            const response = await api.post("/api/auth/register/request-otp", null, {
                 params: {
                     email,
                     full_name: fullName || ""
@@ -94,8 +92,8 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
-            const response = await axios.post(
-                `${API_URL}/api/auth/register`,
+            const response = await api.post(
+                "/api/auth/register",
                 {
                     email,
                     password,
