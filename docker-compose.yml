@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: achievement_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./backend/achievement.db:/app/achievement.db # Initial SQLite DB persistence
+    environment:
+      - DATABASE_URL=sqlite:///./achievement.db
+      - SECRET_KEY=changethis_secret_key_in_production
+      - BACKEND_CORS_ORIGINS=["http://localhost:3000","http://YOUR_SERVER_IP:3000"]
+    networks:
+      - achievement_network
+
+  # Frontend App
+  frontend:
+    build: ./frontend
+    container_name: achievement_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000 # Will need to change to server IP/Domain
+    networks:
+      - achievement_network
+    depends_on:
+      - backend
+  # Optional: Keep Postgres service if you migrate later
+  # postgres:
+  #   image: postgres:15-alpine
+  #   ...
+
+networks:
+  achievement_network:
+    driver: bridge
