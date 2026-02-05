@@ -13,9 +13,6 @@ RUN npm install --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Debug: List files to verify structure (will remove later)
-RUN ls -la && ls -la src/ && ls -la src/lib/
-
 # Build the application (Next.js will create standalone output)
 RUN npm run build
 
@@ -26,10 +23,12 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy necessary files from builder
-COPY --from=builder /app/public ./public
+# Copy necessary files from builder (make public optional)
+RUN mkdir -p ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+# Copy public if it exists (use shell to avoid error if missing)
+RUN if [ -d "/app/public" ]; then cp -r /app/public/* ./public/ 2>/dev/null || true; fi
 
 # Expose port
 EXPOSE 3000
