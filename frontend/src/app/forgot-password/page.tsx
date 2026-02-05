@@ -3,10 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import axios from 'axios';
 import toast from 'react-hot-toast';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import { api } from '@/lib/api';
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
@@ -42,7 +40,7 @@ export default function ForgotPasswordPage() {
         setIsLoading(true);
 
         try {
-            const response = await axios.post(`${API_URL}/api/auth/forgot-password`, null, {
+            const response = await api.post('/api/auth/forgot-password', null, {
                 params: { email }
             });
             console.log('✅ Forgot password response:', response.data);
@@ -62,7 +60,7 @@ export default function ForgotPasswordPage() {
         setIsLoading(true);
 
         try {
-            await axios.post(`${API_URL}/api/auth/verify-otp`, null, {
+            await api.post('/api/auth/verify-otp', null, {
                 params: { email, otp_code: otp }
             });
             toast.success('OTP verified successfully!');
@@ -90,7 +88,7 @@ export default function ForgotPasswordPage() {
         setIsLoading(true);
 
         try {
-            await axios.post(`${API_URL}/api/auth/reset-password`, null, {
+            await api.post('/api/auth/reset-password', null, {
                 params: { email, new_password: newPassword }
             });
             toast.success('Password reset successfully!');
