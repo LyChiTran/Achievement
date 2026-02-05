@@ -13,6 +13,9 @@ RUN npm install --legacy-peer-deps
 # Copy source code
 COPY . .
 
+# Debug: List files to verify structure (will remove later)
+RUN ls -la && ls -la src/ && ls -la src/lib/
+
 # Build the application (Next.js will create standalone output)
 RUN npm run build
 
