@@ -12,6 +12,10 @@ eggs/
 .eggs/
 lib/
 lib64/
+backend/lib/
+backend/lib64/
+# DO NOT ignore frontend/src/lib/ - it contains essential code!
+!frontend/src/lib/
 parts/
 sdist/
 var/
