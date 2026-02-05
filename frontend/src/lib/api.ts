@@ -1,6 +1,22 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Runtime API URL detection - works in both local and production
+const getApiUrl = () => {
+    // Check if we're in browser
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+
+        // If on Railway production frontend
+        if (hostname.includes('railway.app')) {
+            return 'https://achievement-production.up.railway.app';
+        }
+    }
+
+    // Fallback to env var or localhost
+    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+};
+
+const API_URL = getApiUrl();
 console.log('API_URL configured as:', API_URL);
 
 // Create axios instance
