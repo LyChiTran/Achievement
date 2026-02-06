@@ -1,6 +1,7 @@
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import AnyHttpUrl
+from pydantic import AnyHttpUrl, field_validator
+import json
 
 
 class Settings(BaseSettings):
@@ -27,13 +28,28 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
     
-    # CORS
-    BACKEND_CORS_ORIGINS: List[str] = [
+    # CORS - Can be overridden by environment variable
+    BACKEND_CORS_ORIGINS: str | List[str] = json.dumps([
         "http://localhost:3000",
         "http://localhost:8000",
-        "http://192.168.101.26:3000",  # Network IP
+        "http://192.168.101.26:3000",
         "http://127.0.0.1:3000",
-    ]
+    ])
+    
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v):
+        """Parse CORS origins from JSON string or return list as-is"""
+        if isinstance(v, str):
+            try:
+                # Try parsing as JSON array
+                parsed = json.loads(v)
+                if isinstance(parsed, list):
+                    return parsed
+            except json.JSONDecodeError:
+                # If not JSON, treat as comma-separated string
+                return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
     
     # Environment
     ENVIRONMENT: str = "development"
