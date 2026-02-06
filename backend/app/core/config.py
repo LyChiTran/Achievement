@@ -30,7 +30,8 @@ class Settings(BaseSettings):
     
     # CORS - Can be overridden by environment variable
     BACKEND_CORS_ORIGINS: str | List[str] = json.dumps([
-        "http://localhost:3000",
+        "https://perfect-essence-production-948c.up.railway.app",  # Production frontend
+        "http://localhost:3000",  # Local dev
         "http://localhost:8000",
         "http://192.168.101.26:3000",
         "http://127.0.0.1:3000",
