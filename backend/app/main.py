@@ -11,6 +11,12 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
 )
 
+# Debug: Print CORS origins at startup
+print("=" * 50)
+print("CORS ORIGINS CONFIGURED:")
+print(settings.BACKEND_CORS_ORIGINS)
+print("=" * 50)
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
