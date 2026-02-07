@@ -17,7 +17,7 @@ export default function SkillsPage() {
     const [skills, setSkills] = useState<Skill[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [newSkill, setNewSkill] = useState({ name: "", proficiency_level: 50, category: "" });
+    const [newSkill, setNewSkill] = useState({ name: "", proficiency_level: 3, category: "" });
 
     useEffect(() => {
         loadSkills();
@@ -39,7 +39,7 @@ export default function SkillsPage() {
         try {
             await api.post("/api/skills/", newSkill);
             alert("Skill added! 🎯");
-            setNewSkill({ name: "", proficiency_level: 50, category: "" });
+            setNewSkill({ name: "", proficiency_level: 3, category: "" });
             setShowModal(false);
             loadSkills();
         } catch (error) {
@@ -116,7 +116,7 @@ export default function SkillsPage() {
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <span className="text-2xl font-bold text-purple-600">
-                                            {skill.proficiency_level}%
+                                            Level {skill.proficiency_level}/5
                                         </span>
                                         <button
                                             onClick={() => handleDelete(skill.id)}
@@ -129,7 +129,7 @@ export default function SkillsPage() {
                                 <div className="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
                                     <div
                                         className="absolute inset-y-0 left-0 bg-gradient-to-r from-purple-600 to-blue-600 transition-all"
-                                        style={{ width: `${skill.proficiency_level}%` }}
+                                        style={{ width: `${(skill.proficiency_level / 5) * 100}%` }}
                                     />
                                 </div>
                             </div>
@@ -166,16 +166,20 @@ export default function SkillsPage() {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-2">
-                                    Proficiency Level: {newSkill.proficiency_level}%
+                                    Proficiency Level: {newSkill.proficiency_level}/5 ⭐
                                 </label>
                                 <input
                                     type="range"
-                                    min="0"
-                                    max="100"
+                                    min="1"
+                                    max="5"
                                     value={newSkill.proficiency_level}
                                     onChange={e => setNewSkill({ ...newSkill, proficiency_level: parseInt(e.target.value) })}
                                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
                                 />
+                                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>Beginner</span>
+                                    <span>Expert</span>
+                                </div>
                             </div>
                             <div className="flex gap-3 pt-4">
                                 <button type="submit" className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
