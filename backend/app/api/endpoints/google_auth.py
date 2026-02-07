@@ -42,7 +42,7 @@ async def google_login(request: Request):
     return RedirectResponse(url=auth_url)
 
 
-@router.post("/google/callback", response_model=Token)
+@router.get("/google/callback", response_model=Token)
 async def google_callback(
     code: str,
     db: Session = Depends(get_db)
