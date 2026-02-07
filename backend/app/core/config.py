@@ -55,9 +55,15 @@ class Settings(BaseSettings):
     # Environment
     ENVIRONMENT: str = "development"
     
-    # Email (SendGrid)
+    # Google OAuth (optional - for social login)
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = "http://localhost:3000/auth/callback/google"
+    
+    # Email service
     SENDGRID_API_KEY: str = ""
-    FROM_EMAIL: str = "noreply@achievementweb.com"
+    FROM_EMAIL: str = "noreply@achievement.app"
+    FROM_NAME: str = "Achievement App"
     SENDGRID_TEMPLATE_ID: str = ""
 
 
