@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from alembic.config import Config
 from alembic import command
 from app.core.config import settings
-from app.db.session import SessionLocal
+from app.db.base import SessionLocal
 from app.models.user import User
 from app.core.security import get_password_hash
 
