@@ -1,7 +1,6 @@
 from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from authlib.integrations.starlette_client import OAuth
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
@@ -16,16 +15,6 @@ import httpx
 
 router = APIRouter()
 
-# Initialize OAuth only if credentials are configured
-oauth = OAuth()
-if settings.GOOGLE_CLIENT_ID and settings.GOOGLE_CLIENT_SECRET:
-    oauth.register(
-        name='google',
-        client_id=settings.GOOGLE_CLIENT_ID,
-        client_secret=settings.GOOGLE_CLIENT_SECRET,
-        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-        client_kwargs={'scope': 'openid email profile'}
-    )
 
 
 @router.get("/google/login")
@@ -39,8 +28,18 @@ async def google_login(request: Request):
             detail="Google OAuth not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Railway environment variables."
         )
     
-    redirect_uri = settings.GOOGLE_REDIRECT_URI
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+    # Build authorization URL manually (no session needed)
+    auth_url = (
+        "https://accounts.google.com/o/oauth2/v2/auth?"
+        f"client_id={settings.GOOGLE_CLIENT_ID}&"
+        f"redirect_uri={settings.GOOGLE_REDIRECT_URI}&"
+        "response_type=code&"
+        "scope=openid email profile&"
+        "access_type=offline&"
+        "prompt=consent"
+    )
+    
+    return RedirectResponse(url=auth_url)
 
 
 @router.post("/google/callback", response_model=Token)
