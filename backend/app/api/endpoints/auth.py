@@ -71,9 +71,8 @@ def register(
             detail="A user with this email already exists.",
         )
     
-    # Verify OTP
-    temp_user_id = abs(hash(user_in.email)) % 1000000000
-    is_valid = otp_service.verify_otp(db, user_id=temp_user_id, code=otp_code, purpose="registration")
+    # Verify OTP using email (for registration)
+    is_valid = otp_service.verify_otp(db, email=user_in.email, code=otp_code, purpose="registration")
     
     if not is_valid:
         raise HTTPException(

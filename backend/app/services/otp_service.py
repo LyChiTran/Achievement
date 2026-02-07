@@ -63,17 +63,27 @@ class OTPService:
     @staticmethod
     def verify_otp(
         db: Session,
-        user_id: int,
-        code: str,
+        user_id: int = None,
+        email: str = None,
+        code: str = None,
         purpose: str = "password_reset"
     ) -> bool:
-        """Verify an OTP code for a user"""
-        otp = db.query(OTP).filter(
-            OTP.user_id == user_id,
+        """Verify an OTP code for a user or email"""
+        if user_id is None and email is None:
+            return False
+        
+        query = db.query(OTP).filter(
             OTP.code == code,
             OTP.purpose == purpose,
             OTP.is_used == False
-        ).first()
+        )
+        
+        if user_id:
+            query = query.filter(OTP.user_id == user_id)
+        elif email:
+            query = query.filter(OTP.email == email)
+        
+        otp = query.first()
         
         if not otp:
             return False
