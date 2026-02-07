@@ -11,9 +11,10 @@ class OTP(Base, BaseModel):
     """
     __tablename__ = "otps"
     
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)  # Nullable for registration
+    email = Column(String, nullable=True)  # For registration before user exists
     code = Column(String(6), nullable=False)
-    purpose = Column(String, nullable=False)  # "email_verify", "phone_verify", "login", "password_reset"
+    purpose = Column(String, nullable=False)  # "registration", "email_verify", "phone_verify", "login", "password_reset"
     delivery_method = Column(String, nullable=False)  # "email" or "sms"
     expires_at = Column(DateTime, nullable=False)
     is_used = Column(Boolean, default=False, nullable=False)

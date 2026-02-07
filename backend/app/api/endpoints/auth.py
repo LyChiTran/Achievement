@@ -26,7 +26,6 @@ def register_request_otp(
     Step 1: Send OTP to email for registration
     """
     from app.services.otp_service import otp_service
-    from app.services.email_service import email_service
     
     # Check if user already exists
     user = crud_user.get_by_email(db, email=email)
@@ -36,17 +35,20 @@ def register_request_otp(
             detail="Email already registered",
         )
     
-    # Generate OTP without user_id (for registration before user exists)
-    try:
-        otp_code = otp_service.generate_code()
-        # Store OTP separately for registration (temp solution until we fix schema)
-        # For now, just return success - email service will fail gracefully
-        return {"message": "Registration is temporarily disabled due to email service configuration", "temp_id": 0}
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to send OTP: {str(e)}"
-        )
+    # Generate OTP using email (no user_id needed for registration)
+    otp = otp_service.create_otp(db, email=email, purpose="registration")
+    
+    # Print OTP to console logs (since SendGrid is not configured)
+    print("=" * 50)
+    print(f"🔐 REGISTRATION OTP FOR: {email}")
+    print(f"📧 OTP CODE: {otp.code}")
+    print(f"⏰ Expires: {otp.expires_at}")
+    print("=" * 50)
+    
+    # TODO: Enable when SendGrid is configured
+    # email_service.send_registration_otp(to_email=email, otp_code=otp.code, user_name=full_name or "User")
+    
+    return {"message": f"OTP sent! (Check Railway logs for code: {otp.code})", "debug_otp": otp.code}
 
 
 @router.post("/register", response_model=UserSchema, status_code=status.HTTP_201_CREATED)

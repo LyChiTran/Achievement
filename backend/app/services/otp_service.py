@@ -19,17 +19,26 @@ class OTPService:
     @staticmethod
     def create_otp(
         db: Session,
-        user_id: int,
+        user_id: int = None,
+        email: str = None,
         purpose: str = "password_reset",
         delivery_method: str = "email"
     ) -> OTP:
-        """Create and store an OTP for a user"""
+        """Create and store an OTP for a user or email"""
+        if user_id is None and email is None:
+            raise ValueError("Either user_id or email must be provided")
+        
         # Invalidate any existing OTPs for this purpose
-        db.query(OTP).filter(
-            OTP.user_id == user_id,
+        query = db.query(OTP).filter(
             OTP.purpose == purpose,
             OTP.is_used == False
-        ).update({"is_used": True})
+        )
+        if user_id:
+            query = query.filter(OTP.user_id == user_id)
+        elif email:
+            query = query.filter(OTP.email == email)
+        
+        query.update({"is_used": True})
         
         # Generate new OTP
         code = OTPService.generate_code()
@@ -37,6 +46,7 @@ class OTPService:
         
         otp = OTP(
             user_id=user_id,
+            email=email,
             code=code,
             purpose=purpose,
             delivery_method=delivery_method,
