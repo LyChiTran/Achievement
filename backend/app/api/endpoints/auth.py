@@ -56,13 +56,10 @@ def register(
     *,
     db: Session = Depends(get_db),
     user_in: UserCreate,
-    otp_code: str,
 ) -> Any:
     """
-    Step 2: Verify OTP and create user account
+    Register new user - Direct registration without OTP verification
     """
-    from app.services.otp_service import otp_service
-    
     # Check if user already exists
     user = crud_user.get_by_email(db, email=user_in.email)
     if user:
@@ -71,24 +68,11 @@ def register(
             detail="A user with this email already exists.",
         )
     
-    # Verify OTP using email (for registration)
-    is_valid = otp_service.verify_otp(db, email=user_in.email, code=otp_code, purpose="registration")
-    
-    if not is_valid:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid or expired OTP"
-        )
-    
-    # Create new user with email verified
+    # Create user directly
     user = crud_user.create(db, obj_in=user_in)
     
-    # Mark email as verified
-    from app.schemas.user import UserUpdate
-    user_update = UserUpdate(is_email_verified=True)
-    user = crud_user.update(db, db_obj=user, obj_in=user_update)
-    
     return user
+
 
 
 @router.post("/login", response_model=Token)
