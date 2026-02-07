@@ -20,5 +20,5 @@ RUN mkdir -p /app/data
 # Expose port (Railway will use dynamic PORT)
 EXPOSE 8000
 
-# Command to run the application (use shell form to expand $PORT variable)
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips '*'
+# Run migrations, then start the application
+CMD python init_db.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips '*'
