@@ -116,7 +116,7 @@ export default function LoginPage() {
                     {/* Google Sign-In Button */}
                     <button
                         onClick={() => {
-                            window.location.href = '/api/auth/google/login';
+                            window.location.href = 'https://achievement-production.up.railway.app/api/auth/google/login';
                         }}
                         className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all shadow-sm hover:shadow-md"
                     >
