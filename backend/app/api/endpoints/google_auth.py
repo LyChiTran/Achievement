@@ -95,9 +95,13 @@ async def google_callback(
         
         if not user:
             # Create new user from Google account
+            # Use short UUID-based dummy password (Google users won't use it)
+            import uuid
+            dummy_password = f"google_{uuid.uuid4().hex[:16]}"
+            
             user_in = UserCreate(
                 email=email,
-                password=f"google_oauth_{email}",  # Random password, won't be used
+                password=dummy_password,
                 full_name=name
             )
             user = crud_user.create(db, obj_in=user_in)
