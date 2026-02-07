@@ -5,19 +5,15 @@ from app.api.endpoints import (
     categories,
     goals,
     skills,
-    users,
     admin,
-    google_auth,  # Add Google OAuth
+    google_auth,
 )
 
 api_router = APIRouter()
 
 # Auth routes
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
-api_router.include_router(google_auth.router, prefix="/auth", tags=["google-oauth"])  # Google OAuth
-
-# User routes
-api_router.include_router(users.router, prefix="/users", tags=["users"])
+api_router.include_router(google_auth.router, prefix="/auth", tags=["google-oauth"])
 
 # Achievement & Goal routes
 api_router.include_router(achievements.router, prefix="/achievements", tags=["achievements"])
